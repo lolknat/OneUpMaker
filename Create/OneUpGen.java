@@ -7,8 +7,10 @@ public class OneUpGen {
     private int[][] currBoard;
     private boolean[][] rowWalls; //if cell has wall to its right
     private boolean[][] colWalls; //if cell has wall below
-    private int[][] moves;
+    private int[][] moves; //list of moves done (each move is a list of 3 values): 0=row, 1=col, 2=move
 
+
+    //constructors
     public OneUpGen (int size) {
         this(size, 10);
     }
@@ -22,6 +24,7 @@ public class OneUpGen {
         placeWalls(wallQty);
     }
 
+    //important methods
     public void placeWalls(int qty){
         for (int i = 0; i < qty; i++) {
             if (Math.random() < 0.5){
@@ -33,14 +36,18 @@ public class OneUpGen {
         }
     }
 
+    //secondary methods
     public String toString(){
         int[][] b = currBoard;
         boolean[][] rw = rowWalls;
         boolean[][] cw = colWalls;
         StringBuilder sb = new StringBuilder();
+
         for (int r=0; r<size; r++){
             for (int c=0; c<size; c++){
+                //input value
                 sb.append(b[r][c]);
+                //input wall on right or not
                 if (r<size-1 && rw[r][c]){
                     sb.append("|");
                 }
@@ -49,15 +56,19 @@ public class OneUpGen {
                 }
             }
             sb.append("\n");
-            for (boolean w:cw[r]){
-                if (w){
-                    sb.append(" —");
+            //input space between rows
+            if (r<size-1){
+                for (boolean w:cw[r]){
+                    //input wall on bottom or not
+                    if (w){
+                        sb.append(" —");
+                    }
+                    else{
+                        sb.append("  ");
+                    }
                 }
-                else{
-                    sb.append("  ");
-                }
+                sb.append("\n");
             }
-            sb.append("\n");
         }
         return sb.toString();
     }
