@@ -1,12 +1,11 @@
 package Create;
-
+//abcdefghijklmnopqrstuvwxyz
+//ABCDEFGHIJKLMNOPQRSTUVWXYZ
 public class OneUpGen {
     
     private int size;
-    private int[][] origBoard;
-    private int[][] currBoard;
-    private boolean[][] rowWalls; //if cell has wall to its right
-    private boolean[][] colWalls; //if cell has wall below
+    private Cell[][] origBoard;
+    private Cell[][] currBoard;
     private int[][] moves; //list of moves done (each move is a list of 3 values): 0=row, 1=col, 2=move
 
 
@@ -17,27 +16,63 @@ public class OneUpGen {
 
     public OneUpGen (int size, int wallQty){
         this.size = size;
-        origBoard = new int[size][size];
-        currBoard = new int[size][size];
-        rowWalls = new boolean[size][size-1];
-        colWalls = new boolean[size][size-1];
+        origBoard = new Cell[size][size];
+        currBoard = new Cell[size][size];
         placeWalls(wallQty);
     }
 
     //important methods
-    public void placeWalls(int qty){
+    public void placeWalls(int qty) {
         for (int i = 0; i < qty; i++) {
-            if (Math.random() < 0.5){
-                rowWalls[(int) Math.random()*size][(int) Math.random()*(size-1)] = true;
-            }
-            else {
-                colWalls[(int) Math.random()*size][(int) Math.random()*(size-1)] = true;
+            int rnd = (int) (Math.random() * (size * size));
+            int row = rnd / size;
+            int col = rnd % size;
+
+            if (Math.random() < 0.5) {
+                if (col < size - 1) {
+                    currBoard[row][col].wr(true);
+                    if (isSolvable(currBoard)) {
+                        origBoard[row][col].wr(true);
+                    } else {
+                        currBoard[row][col].wr(false); // undo
+                        i--;
+                    }
+                } else {
+                    i--;
+                }
+            } else {
+                if (row < size - 1) {
+                    currBoard[row][col].wd(true);
+                    if (isSolvable(currBoard)) {
+                        origBoard[row][col].wd(true);
+                    } else {
+                        currBoard[row][col].wd(false); // undo
+                        i--;
+                    }
+                } else {
+                    i--;
+                }
             }
         }
     }
 
+    public Cell[][] addWalls(Cell[][] board, int row, int col, boolean right, boolean down){
+        if(right){
+            board[row][col].wr(true);
+        }
+        if(down){
+            board[row][col].wd(true);
+        }
+        return board;
+    }
+
+    public boolean isSolvable(Cell[][] board){
+        return true; //TODO
+    }
+
+
     //secondary methods
-    public String toString(){
+    /*public String toString(){
         int[][] b = currBoard;
         boolean[][] rw = rowWalls;
         boolean[][] cw = colWalls;
@@ -71,5 +106,5 @@ public class OneUpGen {
             }
         }
         return sb.toString();
-    }
+    }*/
 }
