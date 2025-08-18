@@ -33,19 +33,30 @@ public class OneUpGen {
         int cnt = 0;
         while (cnt < qty) {
             //place random vertical wall
-            int vWall = (int) (Math.random() * (size * (size-1)));
-            int vRow = vWall / size;
-            int vCol = vWall % (size-1); //dont place wall on edges
+            int vRow;
+            int vCol;
+            do{
+                int vWall = (int) (Math.random() * (size * (size-1)));
+                vRow = vWall / size;
+                vCol = vWall % (size-1); //dont place wall on edges
+            }while(testBoard[vRow][vCol].wr()); //check if wall already exists
             testBoard[vRow][vCol].wr(true);
 
             //place random horizontal wall
-            int hWall = (int) (Math.random() * ((size-1) * size));
-            int hRow = hWall / (size-1); //dont place wall on edges
-            int hCol = hWall / size;
-            testBoard[vRow][vCol].wd(true);
+            int hRow;
+            int hCol;
+            do{
+                if (Math.random()<0.5){ //has to divide the section into same size as its pair (theory untested for more than 1 wall per row/col)
+                    hRow = vCol;
+                }else{
+                    hRow = size-vCol-2; //-2 cuz size-1 & indexation
+                }
+                hCol = (int) (Math.random() * size);
+            }while(testBoard[hRow][hCol].wd()); //check if wall already exists
+            testBoard[hRow][hCol].wd(true);
 
             //check if possible or go back
-            if (isSolvable(currBoard)){
+            if (isSolvable(testBoard)){
                 currBoard[vRow][vCol].wr(true);
                 currBoard[hRow][hCol].wd(true);
             }else{ //go back
@@ -53,7 +64,6 @@ public class OneUpGen {
                 testBoard[hRow][hCol].wd(false);
                 cnt--;
             }
-
             cnt++;
         }
     }
